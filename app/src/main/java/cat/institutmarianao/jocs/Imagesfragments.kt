@@ -36,6 +36,7 @@ class Imagesfragments : PreferenceFragmentCompat() {
             R.drawable.ninja03
         )
 
+
         val builder = AlertDialog.Builder(requireContext())
         val adapter = object : ArrayAdapter<String>(requireContext(), R.layout.item_ninja_image, ninjaNames) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
