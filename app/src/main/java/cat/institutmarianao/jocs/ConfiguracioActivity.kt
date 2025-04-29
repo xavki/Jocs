@@ -5,7 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import android.widget.Toast
 import androidx.preference.CheckBoxPreference
+
 class ConfiguracioActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,20 +49,11 @@ class ConfiguracioActivity : AppCompatActivity() {
                 true
             }
 
-            // Obtener el número de enemigos desde la preferencia "opcion3"
+            // Mostrar preferencias y leer los valores en cualquier momento si es necesario
             val sharedPreferences = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-            val numEnemigos = sharedPreferences?.getString("opcion3", "1")?.toIntOrNull() ?: 1
+            val numObjectius = sharedPreferences?.getString("opcion3", "1")?.toIntOrNull() ?: 1
+            val opcion3Value = sharedPreferences?.getString("opcion2", "1")
 
-
-            actualizarNumeroDeEnemigos(numEnemigos)
-        }
-
-        // Método para actualizar el número de enemigos en el juego
-        private fun actualizarNumeroDeEnemigos(numEnemigos: Int) {
-            // Aquí puedes usar este valor para inicializar el número de enemigos en tu juego
-            // Por ejemplo:
-            MainActivity.numObjectius = numEnemigos
-            // O cualquier otra lógica que necesites para manejar los enemigos
         }
     }
 }
