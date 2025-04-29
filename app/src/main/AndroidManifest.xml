@@ -21,9 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".PuntuacionsActivity"
+        <activity android:name=".PuntuacionsActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
+
+        <activity android:name=".NombreActivity"
+            android:theme="@style/Theme.AppCompat.Dialog">
+        </activity>
+
         <activity android:name=".ConfiguracioActivity"/>
 
     </application>

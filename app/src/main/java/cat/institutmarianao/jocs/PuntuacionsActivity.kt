@@ -1,13 +1,11 @@
 package cat.institutmarianao.jocs
 
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
 import android.widget.ListView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 
 class PuntuacionsActivity : AppCompatActivity() {
 
@@ -25,28 +23,22 @@ class PuntuacionsActivity : AppCompatActivity() {
         listView.adapter = adapter
     }
 
-        private fun mostrarPuntuacionsDialog() {
-            val puntuacions = listOf("120 Marga", "80 Richard", "20 Juanjo")
 
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Game Score")
+    private fun guardarPuntuacions(puntuacionJugador: Int, nombreJugador: String) {
+        val sharedPrefs: SharedPreferences = getSharedPreferences("Puntuacions", MODE_PRIVATE)
+        val puntuacionsGuardadas =
+            sharedPrefs.getStringSet("puntuacions", setOf())?.toMutableList() ?: mutableListOf()
 
-            val layout = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(50, 30, 50, 30)
-                background = ContextCompat.getDrawable(context, R.drawable.degradat)
-            }
+        // Formatear la puntuación con el nombre del jugador
+        val puntuacionConNombre = "$puntuacionJugador $nombreJugador"
 
-            val listView = ListView(this).apply {
-                adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, puntuacions)
-            }
+        // Agregar la nueva puntuación
+        puntuacionsGuardadas.add(puntuacionConNombre)
 
-            layout.addView(listView)
-            builder.setView(layout)
-
-            builder.setNegativeButton("Tancar") { dialog, _ -> dialog.dismiss() }
-
-            builder.show()
-        }
+        val editor = sharedPrefs.edit()
+        editor.putStringSet("puntuacions", puntuacionsGuardadas.toSet())
+        editor.apply()
     }
 
+
+}

@@ -22,10 +22,16 @@
         android:defaultValue="1" />
 
     <EditTextPreference
-        android:defaultValue="1"
-        android:dialogTitle="Introduce un valor"
         android:key="opcion3"
-        android:summary="Quatitat inicial d'enemics"
-        android:title="Nombre de enemics" />
+        android:id="@+id/numObjectius"
+        android:title="Número de enemigos"
+        android:summary="Cantidad inicial de enemigos"
+        android:defaultValue="1"
+        android:inputType="number"
+        android:dialogTitle="Introduce un valor"
+        android:selectAllOnFocus="true"
+        android:importantForAccessibility="yes"
+        android:maxLines="1" />
+
 
 </PreferenceScreen>

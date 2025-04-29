@@ -19,7 +19,8 @@ import androidx.preference.PreferenceManager
 class MainActivity : AppCompatActivity() {
     lateinit var appTitle: TextView
     lateinit var puntuacion: Button
-
+    lateinit var sortir: Button
+    lateinit var jugar:Button
     companion object {
         var mediaPlayer: MediaPlayer? = null
     }
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
         appTitle = findViewById(R.id.appTitle)
         puntuacion = findViewById(R.id.btnPuntuacions)
+        sortir = findViewById(R.id.btnSortir)
+        jugar = findViewById(R.id.btnJugar)
 
 
 
@@ -40,12 +43,22 @@ class MainActivity : AppCompatActivity() {
         val animacio = AnimationUtils.loadAnimation(this, R.anim.animacio_text)
         appTitle.startAnimation(animacio)
 
-        mostrarDialogNomJugador()
 
         puntuacion.setOnClickListener {
             val intent = Intent(this, PuntuacionsActivity::class.java)
             startActivity(intent)
         }
+
+        sortir.setOnClickListener {
+            finish()
+        }
+
+        jugar.setOnClickListener{
+            val intent = Intent(this, NombreActivity::class.java)
+            startActivity(intent)
+        }
+
+
 
     }
 
@@ -79,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
-    private fun mostrarDialogNomJugador() {
+ /*   private fun mostrarDialogNomJugador() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Nom del jugador")
         builder.setMessage("Introdueix el teu nom:")
@@ -101,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         builder.show()
-    }
+    }*/
 
 
 
