@@ -17,6 +17,7 @@ class Imagesfragments : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+        Log.d("Prefs", "onCreatePreferences called")
 
         ninjaPref = findPreference("opcion2")!!
 

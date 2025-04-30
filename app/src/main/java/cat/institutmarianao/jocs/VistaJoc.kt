@@ -9,7 +9,7 @@ import kotlin.random.Random
 
 class VistaJoc(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
-    private var objectius: MutableList<Grafics> = mutableListOf()
+   /* private var objectius: MutableList<Grafics> = mutableListOf()
 
     init {
         val drawableEnemic: Drawable = context.resources.getDrawable(R.drawable.ninja_enemic, null)
@@ -42,5 +42,5 @@ class VistaJoc(context: Context, attrs: AttributeSet) : View(context, attrs) {
         for (objectiu in objectius) {
             objectiu.dibuixaGrafic(canvas)
         }
-    }
+    }*/
 }

@@ -11,7 +11,16 @@
         android:title="Reproducir música"
         android:defaultValue="true"/>
 
-    <ListPreference
+    <!--<ListPreference
+        android:dialogTitle="Escollir ninja"
+        android:inputType="number"
+        android:key="opcion2"
+        android:summary="Escollir ninja"
+        android:title="Ninja"
+        android:entries="@array/ninja"
+        android:entryValues="@array/codigoninja"
+        android:defaultValue="1" /> -->
+    <Preference
         android:dialogTitle="Escollir ninja"
         android:inputType="number"
         android:key="opcion2"
@@ -20,6 +29,8 @@
         android:entries="@array/ninja"
         android:entryValues="@array/codigoninja"
         android:defaultValue="1" />
+
+
 
     <EditTextPreference
         android:defaultValue="1"

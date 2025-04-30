@@ -20,10 +20,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var appTitle: TextView
     lateinit var puntuacion: Button
     lateinit var sortir: Button
-    lateinit var jugar:Button
-    companion object {
-        var mediaPlayer: MediaPlayer? = null
-    }
+    lateinit var jugar: Button
+    private var mediaPlayer: MediaPlayer? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +31,18 @@ class MainActivity : AppCompatActivity() {
         val myToolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(myToolbar)
 
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val playMusic = sharedPreferences.getBoolean("opcion1", true) // Valor predeterminado true
+
+        if (playMusic) {
+            startMusic()
+        }
+
         appTitle = findViewById(R.id.appTitle)
         puntuacion = findViewById(R.id.btnPuntuacions)
         sortir = findViewById(R.id.btnSortir)
         jugar = findViewById(R.id.btnJugar)
-
 
 
         // Aplicar l'animació
@@ -53,11 +59,10 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        jugar.setOnClickListener{
+        jugar.setOnClickListener {
             val intent = Intent(this, NombreActivity::class.java)
             startActivity(intent)
         }
-
 
 
     }
@@ -92,54 +97,64 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
- /*   private fun mostrarDialogNomJugador() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Nom del jugador")
-        builder.setMessage("Introdueix el teu nom:")
+    /*   private fun mostrarDialogNomJugador() {
+           val builder = AlertDialog.Builder(this)
+           builder.setTitle("Nom del jugador")
+           builder.setMessage("Introdueix el teu nom:")
 
-        val input = EditText(this)
-        input.hint = "Escriu aquí el teu nom"
-        builder.setView(input)
+           val input = EditText(this)
+           input.hint = "Escriu aquí el teu nom"
+           builder.setView(input)
 
-        builder.setPositiveButton("OK") { dialog, _ ->
-            val nom = input.text.toString()
-            // Guarda el nom a SharedPreferences
-            val prefs = getSharedPreferences("Noms_de_usuari", MODE_PRIVATE)
-            prefs.edit().putString("nomJugador", nom).apply()
-            Toast.makeText(this, "Nom guardat: $nom", Toast.LENGTH_SHORT).show()
+           builder.setPositiveButton("OK") { dialog, _ ->
+               val nom = input.text.toString()
+               // Guarda el nom a SharedPreferences
+               val prefs = getSharedPreferences("Noms_de_usuari", MODE_PRIVATE)
+               prefs.edit().putString("nomJugador", nom).apply()
+               Toast.makeText(this, "Nom guardat: $nom", Toast.LENGTH_SHORT).show()
+           }
+
+           builder.setNegativeButton("Cancel·lar") { dialog, _ ->
+               dialog.dismiss()
+           }
+
+           builder.show()
+       }*/
+        // Iniciar música si no está sonando
+    private fun startMusic() {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(this, R.raw.pokemontcg)
+            mediaPlayer?.isLooping = true
         }
 
-        builder.setNegativeButton("Cancel·lar") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        builder.show()
-    }*/
-
-
-
-    override fun onStart() {
-        super.onStart()
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        if (prefs.getBoolean("opcion1", true)) {
-            if (mediaPlayer == null) {
-                mediaPlayer = MediaPlayer.create(this, R.raw.pokemontcg)
-                mediaPlayer?.isLooping = true
-            }
+        if (!mediaPlayer!!.isPlaying) {
             mediaPlayer?.start()
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        mediaPlayer?.pause()
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
-}
+            /*override fun onStart() {
+                 super.onStart()
+                 val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+                 if (prefs.getBoolean("opcion1", true)) {
+                     if (mediaPlayer == null) {
+                         mediaPlayer = MediaPlayer.create(this, R.raw.pokemontcg)
+                         mediaPlayer?.isLooping = true
+                     }
+                     mediaPlayer?.start()
+                 }
+             }*/
+
+            override fun onStop() {
+                super.onStop()
+                mediaPlayer?.pause()
+            }
+
+            override fun onDestroy() {
+                super.onDestroy()
+                mediaPlayer?.release()
+                mediaPlayer = null
+            }
+        }
 
 
