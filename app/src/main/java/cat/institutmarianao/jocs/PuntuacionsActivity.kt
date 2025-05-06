@@ -1,6 +1,5 @@
 package cat.institutmarianao.jocs
 
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -19,26 +18,26 @@ class PuntuacionsActivity : AppCompatActivity() {
         val sharedPrefs: SharedPreferences = getSharedPreferences("Puntuacions", MODE_PRIVATE)
         val puntuacions = sharedPrefs.getStringSet("puntuacions", setOf())?.toList() ?: listOf()
 
+        // Crear un adaptador para mostrar las puntuaciones
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, puntuacions)
         listView.adapter = adapter
     }
 
-
-    private fun guardarPuntuacions(puntuacionJugador: Int, nombreJugador: String) {
+    // Función para guardar la puntuación con el nombre del jugador
+    fun guardarPuntuacions(puntuacionJugador: Int, nombreJugador: String) {
         val sharedPrefs: SharedPreferences = getSharedPreferences("Puntuacions", MODE_PRIVATE)
         val puntuacionsGuardadas =
             sharedPrefs.getStringSet("puntuacions", setOf())?.toMutableList() ?: mutableListOf()
 
         // Formatear la puntuación con el nombre del jugador
-        val puntuacionConNombre = "$puntuacionJugador $nombreJugador"
+        val puntuacionConNombre = "$nombreJugador: $puntuacionJugador"
 
         // Agregar la nueva puntuación
         puntuacionsGuardadas.add(puntuacionConNombre)
 
+        // Guardar las puntuaciones actualizadas
         val editor = sharedPrefs.edit()
         editor.putStringSet("puntuacions", puntuacionsGuardadas.toSet())
         editor.apply()
     }
-
-
 }

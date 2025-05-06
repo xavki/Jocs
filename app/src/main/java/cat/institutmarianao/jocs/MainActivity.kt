@@ -60,9 +60,39 @@ class MainActivity : AppCompatActivity() {
         }
 
         jugar.setOnClickListener {
-            val intent = Intent(this, NombreActivity::class.java)
-            startActivity(intent)
+            // Obtener el nombre guardado de SharedPreferences
+            val sharedPrefs = getSharedPreferences("Nombres de usuario", MODE_PRIVATE)
+            val nombreJugador = sharedPrefs.getString("nombreJugador", null)
+
+            if (nombreJugador == null) {
+                // Si no hay un nombre guardado, redirigir a NombreActivity para ingresar el nombre
+                val intent = Intent(this, NombreActivity::class.java)
+                startActivity(intent)
+            } else {
+                // Si ya hay un nombre guardado, mostrar un AlertDialog preguntando si desea reemplazarlo
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("¿Nuevo Jugador?")
+                builder.setMessage("Actualmente el nombre guardado es: $nombreJugador. ¿Quieres reemplazarlo con un nuevo nombre?")
+
+                builder.setPositiveButton("Sí") { _, _ ->
+                    // Si el jugador decide reemplazarlo, redirigir a NombreActivity para que ingrese un nuevo nombre
+                    val intent = Intent(this, NombreActivity::class.java)
+                    startActivity(intent)
+                }
+
+                builder.setNegativeButton("No") { _, _ ->
+                    // Si el jugador no quiere reemplazarlo, solo iniciar VistaJoc con el nombre guardado
+                    Toast.makeText(this, "Bienvenido de nuevo, $nombreJugador", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, JocActivity::class.java)
+                    startActivity(intent)
+                }
+
+                val alertDialog = builder.create()
+                alertDialog.show()
+            }
         }
+
+
 
 
     }
@@ -120,7 +150,7 @@ class MainActivity : AppCompatActivity() {
 
            builder.show()
        }*/
-        // Iniciar música si no está sonando
+    // Iniciar música si no está sonando
     private fun startMusic() {
         if (mediaPlayer == null) {
             mediaPlayer = MediaPlayer.create(this, R.raw.pokemontcg)
@@ -133,28 +163,25 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-            /*override fun onStart() {
-                 super.onStart()
-                 val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-                 if (prefs.getBoolean("opcion1", true)) {
-                     if (mediaPlayer == null) {
-                         mediaPlayer = MediaPlayer.create(this, R.raw.pokemontcg)
-                         mediaPlayer?.isLooping = true
-                     }
-                     mediaPlayer?.start()
-                 }
-             }*/
-
-            override fun onStop() {
-                super.onStop()
-                mediaPlayer?.pause()
-            }
-
-            override fun onDestroy() {
-                super.onDestroy()
-                mediaPlayer?.release()
-                mediaPlayer = null
-            }
+    override fun onStart() {
+        super.onStart()
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        if (prefs.getBoolean("opcion1", true)) {
+            val intent = Intent(this, Musicservice::class.java)
+            intent.action = "START"
+            startService(intent)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // No se detiene el servicio aquí para que la música siga
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // No liberamos mediaPlayer aquí porque lo gestiona el servicio
+    }
+}
 
 

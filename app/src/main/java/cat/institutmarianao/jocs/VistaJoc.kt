@@ -1,46 +1,64 @@
 package cat.institutmarianao.jocs
 
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
-import kotlin.random.Random
+import androidx.core.content.res.ResourcesCompat
 
-class VistaJoc(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
-   /* private var objectius: MutableList<Grafics> = mutableListOf()
+    private val objectius = mutableListOf<Grafics>()
+    private val numObjectius = 5 // Puedes ajustar este valor según lo necesites
 
     init {
-        val drawableEnemic: Drawable = context.resources.getDrawable(R.drawable.ninja_enemic, null)
+        val drawableEnemic: Drawable? =
+            ResourcesCompat.getDrawable(resources, R.drawable.ninja_enemic, null)
 
-        // Inicialización de los objetos
-        for (i in 0 until numObjectius) {
-            val objectiu = Grafics(this, drawableEnemic)
-            objectiu.setIncY(Random.nextDouble() * 4 - 2)
-            objectiu.setIncX(Random.nextDouble() * 4 - 2)
-            objectiu.setAngle(Random.nextInt(360).toInt())
-            objectiu.setRotacio(Random.nextInt(8) - 4)
+        drawableEnemic?.let {
+            val objectiu = Grafics(this, it)
+            objectiu.incY = Math.random() * 4 - 2
+            objectiu.incX = Math.random() * 4 - 2
+            objectiu.rotacio = (Math.random() * 8 - 4).toInt()
             objectius.add(objectiu)
         }
     }
 
-    // Método que nos da el ancho y alto de la pantalla
-    override fun onSizeChanged(ancho: Int, alto: Int, anchoAnterior: Int, altoAnterior: Int) {
-        super.onSizeChanged(ancho, alto, anchoAnterior, altoAnterior)
-
-        // Una vez que conocemos el ancho y alto de la pantalla, situamos los objetivos aleatoriamente
+    override fun onSizeChanged(ancho: Int, alto: Int, anchoAnt: Int, altoAnt: Int) {
+        super.onSizeChanged(ancho, alto, anchoAnt, altoAnt)
+        // Un cop tenim les dimensions, posicionem els objectius
         for (objectiu in objectius) {
-            objectiu.setPosX(Random.nextDouble() * (ancho - objectiu.getAmplada()))
-            objectiu.setPosY(Random.nextDouble() * (alto - objectiu.getAltura()))
+            objectiu.posX = Math.random() * (ancho - objectiu.amplada)
+            objectiu.posY = Math.random() * (alto - objectiu.altura)
         }
     }
 
-    // Método que dibuja la vista
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         for (objectiu in objectius) {
             objectiu.dibuixaGrafic(canvas)
         }
-    }*/
+    }
+
+    // Suponiendo que esta función se llama cuando termina el juego:
+    fun finalizarJuego(puntuacionJugador: Int) {
+        // Obtener el nombre del jugador
+        val sharedPrefs: SharedPreferences =
+            context.getSharedPreferences("Nombres de usuario", Context.MODE_PRIVATE)
+        val nombreJugador = sharedPrefs.getString("nombreJugador", "Jugador Desconocido")
+
+        // Guardar la puntuación con el nombre del jugador en PuntuacionsActivity
+        val puntuacionesActivity = PuntuacionsActivity()
+        puntuacionesActivity.guardarPuntuacions(
+            puntuacionJugador,
+            nombreJugador ?: "Jugador Desconocido"
+        )
+
+        // Luego se puede redirigir a la pantalla de puntuaciones
+        val intent = Intent(context, PuntuacionsActivity::class.java)
+        context.startActivity(intent)
+    }
 }
