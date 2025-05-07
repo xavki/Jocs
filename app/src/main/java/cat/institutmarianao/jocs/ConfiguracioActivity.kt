@@ -1,9 +1,12 @@
 package cat.institutmarianao.jocs
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.CheckBoxPreference
+import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 
@@ -50,6 +53,29 @@ class ConfiguracioActivity : AppCompatActivity() {
             val intent = Intent(requireContext(), Musicservice::class.java)
             intent.action = if (playMusic) "START" else "STOP"
             requireContext().startService(intent)
+
+
+            // Obtener la preferencia de "Número de enemigos"
+            val numObjectiusPref = findPreference<EditTextPreference>("opcion3")
+            numObjectiusPref?.setOnPreferenceChangeListener { _, newValue ->
+                val newNumObjectius = newValue.toString().toIntOrNull() ?: 1  // Convertir a número
+
+                // Verifica si el valor se guarda correctamente
+                Log.d("ConfiguracioFragment", "Nuevo número de enemigos: $newNumObjectius")
+
+                // Guardar el nuevo número de enemigos en las preferencias
+                val sharedPrefs = context?.getSharedPreferences("Nombres de usuario", Context.MODE_PRIVATE)
+                if (sharedPrefs != null) {
+                    sharedPrefs.edit().putInt("opcion3", newNumObjectius).apply()
+                }
+                Log.d("ConfiguracioFragment", "Nuevo número de enemigos guardado: $newNumObjectius")
+
+
+
+                true
+
+            }
+
         }
     }
 }
