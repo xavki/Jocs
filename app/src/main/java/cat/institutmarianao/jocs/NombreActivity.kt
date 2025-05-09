@@ -6,7 +6,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
 class NombreActivity : AppCompatActivity() {
     lateinit var name: EditText
     lateinit var guardar: Button
@@ -19,37 +18,30 @@ class NombreActivity : AppCompatActivity() {
         guardar = findViewById(R.id.buttonGuardarNombre)
 
         guardar.setOnClickListener {
-            val nombreJugador = name.text.toString()
+            val nombreJugador = name.text.toString().trim()
 
-            // Verificar que el nombre no esté vacío
             if (nombreJugador.isNotBlank()) {
-                // Guardar el nombre del jugador en SharedPreferences
-                val sharedPrefs: SharedPreferences = getSharedPreferences("Nombres de usuario", MODE_PRIVATE)
-                val editor = sharedPrefs.edit()
+                val sharedPrefs = getSharedPreferences("Puntuacions", MODE_PRIVATE)
+                val puntuacions = sharedPrefs.all.mapValues { it.value.toString().toIntOrNull() ?: 0 }
 
-                // Obtener la lista de jugadores y sus puntuaciones guardados
-                val jugadores = sharedPrefs.getString("jugadores", null)
-
-                // Si hay jugadores previos, los recuperamos y añadimos el nuevo jugador con su puntuación
-                val listaJugadores = if (jugadores == null) {
-                    mutableListOf<String>()
+                if (puntuacions.containsKey(nombreJugador)) {
+                    Toast.makeText(this, "Aquest nom ja existeix.", Toast.LENGTH_SHORT).show()
                 } else {
-                    jugadores.split(",").toMutableList()
+                    // Guardar nom amb puntuació inicial de 0
+                    val editor = sharedPrefs.edit()
+                    editor.putInt(nombreJugador, 0)
+                    editor.apply()
+
+                    // També guardar per accés ràpid al nom actual
+                    getSharedPreferences("Nombres de usuario", MODE_PRIVATE).edit()
+                        .putString("nombreJugador", nombreJugador)
+                        .apply()
+
+                    Toast.makeText(this, "Nom guardat: $nombreJugador", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
-
-                // Aquí agregamos el nuevo jugador. Asumimos que la puntuación es 0 por ahora, y la actualizaremos más tarde.
-                listaJugadores.add("$nombreJugador:0")
-
-                // Guardar la lista actualizada de jugadores y sus puntuaciones
-                editor.putString("jugadores", listaJugadores.joinToString(","))
-                editor.apply()
-
-                Toast.makeText(this, "Nombre guardado: $nombreJugador", Toast.LENGTH_SHORT).show()
-
-                // Una vez guardado el nombre, cerrar la actividad para volver a MainActivity
-                finish()
             } else {
-                Toast.makeText(this, "Por favor, ingresa un nombre.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Si us plau, introdueix un nom.", Toast.LENGTH_SHORT).show()
             }
         }
     }

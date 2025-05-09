@@ -60,37 +60,37 @@ class MainActivity : AppCompatActivity() {
         }
 
         jugar.setOnClickListener {
-            // Obtener el nombre guardado de SharedPreferences
-            val sharedPrefs = getSharedPreferences("Nombres de usuario", MODE_PRIVATE)
-            val nombreJugador = sharedPrefs.getString("nombreJugador", null)
+            // Mostrar un cuadro de texto para que el jugador ingrese su nombre
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Ingrese su nombre")
+            val input = EditText(this)
+            builder.setView(input)
 
-            if (nombreJugador == null) {
-                // Si no hay un nombre guardado, redirigir a NombreActivity para ingresar el nombre
-                val intent = Intent(this, NombreActivity::class.java)
-                startActivity(intent)
-            } else {
-                // Si ya hay un nombre guardado, mostrar un AlertDialog preguntando si desea reemplazarlo
-                val builder = AlertDialog.Builder(this)
-                builder.setTitle("¿Nuevo Jugador?")
-                builder.setMessage("Actualmente el nombre guardado es: $nombreJugador. ¿Quieres reemplazarlo con un nuevo nombre?")
+            builder.setPositiveButton("Aceptar") { _, _ ->
+                // Obtener el nombre del jugador ingresado
+                val nombreJugador = input.text.toString().trim()
 
-                builder.setPositiveButton("Sí") { _, _ ->
-                    // Si el jugador decide reemplazarlo, redirigir a NombreActivity para que ingrese un nuevo nombre
-                    val intent = Intent(this, NombreActivity::class.java)
-                    startActivity(intent)
-                }
-
-                builder.setNegativeButton("No") { _, _ ->
-                    // Si el jugador no quiere reemplazarlo, solo iniciar VistaJoc con el nombre guardado
-                    Toast.makeText(this, "Bienvenido de nuevo, $nombreJugador", Toast.LENGTH_SHORT).show()
+                if (nombreJugador.isNotEmpty()) {
+                    // Si el jugador ha ingresado un nombre, redirigir al juego
                     val intent = Intent(this, JocActivity::class.java)
+                    intent.putExtra("nombreJugador", nombreJugador)
+                    intent.putExtra("puntuacion", 0) // Si no tienes una puntuación previa, puedes poner 0
                     startActivity(intent)
+                } else {
+                    // Si no se ingresa un nombre, mostrar un mensaje y no hacer nada
+                    Toast.makeText(this, "Por favor, ingrese un nombre", Toast.LENGTH_SHORT).show()
                 }
-
-                val alertDialog = builder.create()
-                alertDialog.show()
             }
+
+            builder.setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.cancel()
+            }
+
+            val alertDialog = builder.create()
+            alertDialog.show()
         }
+
+
 
 
 

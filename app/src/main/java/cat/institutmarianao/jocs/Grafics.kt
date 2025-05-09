@@ -8,7 +8,7 @@ import android.view.View
 import kotlin.math.hypot
 
 
-class Grafics(private val view: View, private val drawable: Drawable) {
+class Grafics(val view: View, val drawable: Drawable) {
 
     companion object {
         const val MAX_VELOCITAT = 20
@@ -18,11 +18,11 @@ class Grafics(private val view: View, private val drawable: Drawable) {
     var posY: Double = 0.0
     var incX: Double = 0.0
     var incY: Double = 0.0
-    private var angle: Int = 0
+    var angle: Int = 0
     var rotacio: Int = 0
     val amplada: Int = drawable.intrinsicWidth
     val altura: Int = drawable.intrinsicHeight
-    private val radiColisio: Int = (altura + amplada) / 4
+    val radiColisio: Int = (altura + amplada) / 4
 
 
     fun dibuixaGrafic(canvas: Canvas) {
@@ -65,7 +65,9 @@ class Grafics(private val view: View, private val drawable: Drawable) {
         return hypot(posX - g.posX, posY - g.posY)
     }
 
-    fun verificaColision(g: Grafics): Boolean {
+    fun verificaColisio(g: Grafics): Boolean {
         return distancia(g) < (radiColisio + g.radiColisio)
     }
+
+
 }
