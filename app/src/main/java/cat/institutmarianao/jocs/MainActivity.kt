@@ -1,15 +1,12 @@
 package cat.institutmarianao.jocs
 
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AnimationUtils
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -21,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var puntuacion: Button
     lateinit var sortir: Button
     lateinit var jugar: Button
-    private var mediaPlayer: MediaPlayer? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +32,10 @@ class MainActivity : AppCompatActivity() {
         val playMusic = sharedPreferences.getBoolean("opcion1", true) // Valor predeterminado true
 
         if (playMusic) {
-            startMusic()
+            Intent(this, Musicservice::class.java).also {
+                it.action = "START"
+                startService(it)
+            }
         }
 
         appTitle = findViewById(R.id.appTitle)
@@ -56,6 +55,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         sortir.setOnClickListener {
+            Intent(this, Musicservice::class.java).also {
+                it.action = "STOP"
+                startService(it)
+            }
             finish()
         }
 
@@ -86,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mostrarInformacio() {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle("Informació de l'aplicació")
         builder.setMessage(
             "Nom de l'app: Ninja Warrior\n" + "Versió: 1.0\n" + "Desenvolupador: Xavi martinez"
@@ -120,38 +123,32 @@ class MainActivity : AppCompatActivity() {
 
            builder.show()
        }*/
-    // Iniciar música si no está sonando
-    private fun startMusic() {
-        if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer.create(this, R.raw.pokemontcg)
-            mediaPlayer?.isLooping = true
-        }
-
-        if (!mediaPlayer!!.isPlaying) {
-            mediaPlayer?.start()
-        }
-    }
 
 
     override fun onStart() {
         super.onStart()
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        // Arrancamos siempre el Musicservice si “Reproducir música” está activo
+        val prefs = PreferenceManager
+            .getDefaultSharedPreferences(this)
         if (prefs.getBoolean("opcion1", true)) {
-            val intent = Intent(this, Musicservice::class.java)
-            intent.action = "START"
-            startService(intent)
+            Intent(this, Musicservice::class.java).also {
+                it.action = "START"
+                startService(it)
+            }
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // No se detiene el servicio aquí para que la música siga
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // No liberamos mediaPlayer aquí porque lo gestiona el servicio
+        // Cuando la Activity se cierra definitivamente, enviamos STOP para pausar la música
+        if (isFinishing) {
+            Intent(this, Musicservice::class.java).also {
+                it.action = "STOP"
+                startService(it)
+            }
+        }
     }
+
 }
 
 
