@@ -38,7 +38,11 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     // //// THREAD I TEMPS //////
     // Thread encarregat de processar el joc
-    var thread: ThreadJoc = ThreadJoc()
+    @Volatile
+    var running = false     // controla cuándo debe parar el hilo
+
+    var thread: ThreadJoc? = null
+
 
     //Cada quant temps volem processar canvis (ms)
     var PERIODE_PROCES = 50
@@ -75,7 +79,13 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         mpLlancament = MediaPlayer.create(context, R.raw.llancament);
         mpExplosio = MediaPlayer.create(context, R.raw.explosio);
         drawableEnemic = ResourcesCompat.getDrawable(resources, R.drawable.ninja_enemic, null)!!
-        drawableObjectiu = arrayOfNulls<Drawable>(numObjectius)
+        drawableGanivet = ResourcesCompat.getDrawable(resources, R.drawable.ganivet, null)!!
+        drawableNinja = ResourcesCompat.getDrawable(resources, R.drawable.ninja01, null)!!
+
+        drawableObjectiu = arrayOfNulls<Drawable>(3)
+        drawableObjectiu[0] = context.getResources().getDrawable(R.drawable.cap_ninja, null); //cap
+        drawableObjectiu[1] = context.getResources().getDrawable(R.drawable.cos_ninja, null); //cos
+        drawableObjectiu[2] = context.getResources().getDrawable(R.drawable.cua_ninja, null);
 
         if (context is Activity) {
             pare = context
@@ -96,10 +106,8 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             }
         }
 
-        drawableNinja = ResourcesCompat.getDrawable(resources, R.drawable.ninja01, null)!!
         ninja = Grafics(this, drawableNinja)
 
-        drawableGanivet = ResourcesCompat.getDrawable(resources, R.drawable.ganivet, null)!!
         ganivet = Grafics(this, drawableGanivet)
 
         /*if (condicion) {
@@ -110,9 +118,7 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             drawableNinja = ResourcesCompat.getDrawable(resources, R.drawable.ninja03, null)
         }*/
 
-        drawableObjectiu[0] = context.getResources().getDrawable(R.drawable.cap_ninja, null); //cap
-        drawableObjectiu[1] = context.getResources().getDrawable(R.drawable.cos_ninja, null); //cos
-        drawableObjectiu[2] = context.getResources().getDrawable(R.drawable.cua_ninja, null);
+
     }
 
     override fun onSizeChanged(ancho: Int, alto: Int, anchoAnt: Int, altoAnt: Int) {
@@ -139,8 +145,11 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             } while (objectiu.distancia(ninja) < (ancho + alto) / 5)
         }
         ultimProces = System.currentTimeMillis()
-        thread.start()
-
+        if (thread == null) {
+            running = true
+            ultimProces = System.currentTimeMillis()
+            thread = ThreadJoc().also { it.start() }
+        }
     }
 
 
@@ -161,92 +170,67 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     // Suponiendo que esta función se llama cuando termina el juego:
     fun finalitzarJoc(victoria: Boolean) {
-        val prefs = context.getSharedPreferences("Puntuacions", Context.MODE_PRIVATE)
-        val nombre = nomJugador
-        val puntuacionFinal = puntuacionJugador
-        val anterior = prefs.getInt(nombre, 0)
-        if (puntuacionFinal > anterior) {
-            prefs.edit()
-                .putInt(nombre, puntuacionFinal)
-                .apply()
-        }
-        // 2) Volver al MainActivity
-        val intent = Intent(context, MainActivity::class.java).apply {
-            // Limpia la pila para no acumular actividades
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        }
-        context.startActivity(intent)
-        // 3) Terminar el juego
-        if (context is Activity) {
-            (context as Activity).finish()
-        }
+        running = false
+        thread?.interrupt()
 
+        // 2) guardamos mejor puntuación
+        val prefs = context.getSharedPreferences("Puntuacions", MODE_PRIVATE)
+        prefs.edit()
+            .putInt(nomJugador, maxOf(prefs.getInt(nomJugador, 0), puntuacionJugador))
+            .apply()
+
+        // 3) regresamos al MainActivity
+        val intent = Intent(context, MainActivity::class.java)
+            .apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP) }
+        context.startActivity(intent)
+
+        // 4) cerramos la vista de juego
+        if (context is Activity) (context as Activity).finish()
     }
 
 
     inner class ThreadJoc : Thread() {
         override fun run() {
-            while (true) {
-                actualitzaMoviment()
+            try {
+                while (running) {
+                    actualitzaMoviment()
+                }
+            } catch (_: InterruptedException) {
+                // sale limpios si lo interrumpen
             }
         }
     }
 
     @Synchronized
     protected fun actualitzaMoviment() {
-        val instant_actual = System.currentTimeMillis()
-        // No facis res si el període de procés no s'ha complert.
-        if (ultimProces + PERIODE_PROCES > instant_actual) {
-            return
-        }
-        // Per una execució en temps real calculem retard
-        val retard = ((instant_actual - ultimProces) / PERIODE_PROCES).toDouble()
-        ultimProces = instant_actual // Per a la propera vegada
+        val now = System.currentTimeMillis()
+        if (ultimProces + PERIODE_PROCES > now) return
+        val retard = (now - ultimProces) / PERIODE_PROCES.toDouble()
+        ultimProces = now
 
-        // Actualitzem velocitat i direcció del personatge Ninja a partir de
-        // girNinja i acceleracioNinja (segons l'entrada del jugador)
+        // 0) Actualizar ángulo y velocidad del ninja
         ninja.angle = (ninja.angle + girNinja * retard).toInt()
-
-        val nIncX = ninja.incX + acceleracioNinja *
-                Math.cos(Math.toRadians(ninja.angle.toDouble())) * retard
-
-        val nIncY = ninja.incY + acceleracioNinja *
-                Math.sin(Math.toRadians(ninja.angle.toDouble())) * retard
-
-        // Actualitzem si el módul de la velocitat no és més gran que el màxim
+        val nIncX = ninja.incX + acceleracioNinja * Math.cos(Math.toRadians(ninja.angle.toDouble())) * retard
+        val nIncY = ninja.incY + acceleracioNinja * Math.sin(Math.toRadians(ninja.angle.toDouble())) * retard
         if (Math.hypot(nIncX, nIncY) <= Grafics.MAX_VELOCITAT) {
             ninja.incX = nIncX
             ninja.incY = nIncY
         }
-
-        // Actualitzem posicions X i Y
+        // ← Aquí movemos realmente la posición del ninja
         ninja.incrementaPos(retard)
-        for (objectiu in objectius) {
-            objectiu.incrementaPos(retard)
+
+        // 1) Mover todos los objectius (enemigos + fragmentos)
+        objectius.forEach { it.incrementaPos(retard) }
+
+        // 2) Derrota si colisiona con cualquier objectiu
+        objectius.find { ninja.verificaColisio(it) }
+            ?.let { finalitzarJoc(false); return }
+
+        // 3) Victoria cuando no queden objectius
+        if (objectius.isEmpty()) {
+            finalitzarJoc(true)
+            return
         }
-        // Actualitzem posicions dels objectius (enemics)
-        for (objectiu in objectius) {
-            objectiu.incrementaPos(retard)
-
-            // Comprovem si el ninja col·lideix amb l'objectiu (enemics)
-            if (ninja.verificaColisio(objectiu)) {
-                // Si hi ha col·lisió, finalitza el joc
-                if (objectius.isEmpty()) {
-                    finalitzarJoc(true)
-                    return
-                }
-                for (objectiu in objectius) {
-                    objectiu.incrementaPos(retard)
-
-                    if (ninja.verificaColisio(objectiu)) {
-                        finalitzarJoc(false) // derrota
-                        return
-                    }
-                }
-            }
-        }
-
-        invalidate()
 
         // Actualitzem posició de ganivet
         if (ganivetActiu) {
@@ -262,6 +246,8 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                     }
             }
         }
+        invalidate()
+
     }
 
     private fun destrueixObjectiu(i: Int) {
