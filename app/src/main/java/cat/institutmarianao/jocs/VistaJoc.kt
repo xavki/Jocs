@@ -15,6 +15,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
+import androidx.preference.PreferenceManager
 
 
 @SuppressLint("UseCompatLoadingForDrawables")
@@ -28,7 +29,7 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     var puntuacionJugador: Int = 0  // Esta variable almacena la puntuación del jugador
 
     // //// NINJA //////
-    var ninja: Grafics // Gràfic del ninja
+    lateinit var ninja: Grafics // Gràfic del ninja
     var girNinja = 0           // Increment de direcció
     var acceleracioNinja = 0f  // augment de velocitat
 
@@ -106,17 +107,23 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             }
         }
 
+
+
+        // Leemos la preferencia opcion2 ("nin1", "nin2" o "nin3")
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        drawableNinja = when (prefs.getString("opcion2", "nin1")) {
+            "nin2" -> ResourcesCompat.getDrawable(resources, R.drawable.ninja02, null)!!
+            "nin3" -> ResourcesCompat.getDrawable(resources, R.drawable.ninja03, null)!!
+            else   -> ResourcesCompat.getDrawable(resources, R.drawable.ninja01, null)!!
+        }
+        //creamos el gráfico del ninja con el drawable adecuado
         ninja = Grafics(this, drawableNinja)
+
+
+
 
         ganivet = Grafics(this, drawableGanivet)
 
-        /*if (condicion) {
-            drawableNinja = ResourcesCompat.getDrawable(resources, R.drawable.ninja01, null)
-        } else if (otraCondicion) {
-            drawableNinja = ResourcesCompat.getDrawable(resources, R.drawable.ninja02, null)
-        } else {
-            drawableNinja = ResourcesCompat.getDrawable(resources, R.drawable.ninja03, null)
-        }*/
 
 
     }

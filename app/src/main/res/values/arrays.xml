@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="ninja">
+    <string-array name="ninja_names">
         <item>Ninja 1</item>
         <item>Ninja 2</item>
         <item>Ninja 3</item>
     </string-array>
-    <string-array name="codigoninja">
+    <string-array name="ninja_values">
         <item>nin1</item>
         <item>nin2</item>
         <item>nin3</item>
     </string-array>
+    <array name="ninja_icons">
+        <item>@drawable/ninja01</item>
+        <item>@drawable/ninja02</item>
+        <item>@drawable/ninja03</item>
+    </array>
 </resources>

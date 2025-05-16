@@ -11,24 +11,33 @@
         android:title="Reproducir música"
         android:defaultValue="true"/>
 
-    <!--<ListPreference
+        <ListPreference
         android:dialogTitle="Escollir ninja"
         android:inputType="number"
         android:key="opcion2"
         android:summary="Escollir ninja"
         android:title="Ninja"
-        android:entries="@array/ninja"
-        android:entryValues="@array/codigoninja"
-        android:defaultValue="1" /> -->
-    <Preference
+        android:entries="@array/ninja_names"
+        android:entryValues="@array/ninja_values"
+        android:defaultValue="nin2" />
+    <!--<Preference
         android:dialogTitle="Escollir ninja"
         android:inputType="number"
         android:key="opcion2"
         android:summary="Escollir ninja"
         android:title="Ninja"
-        android:entries="@array/ninja"
-        android:entryValues="@array/codigoninja"
-        android:defaultValue="1" />
+        android:entries="@array/ninja_names"
+        android:entryValues="@array/ninja_values"
+        android:defaultValue="nin1" />
+    <cat.institutmarianao.jocs.IconListPreference
+        android:key="opcion2"
+        android:title="Ninja"
+        android:dialogTitle="Escollir ninja"
+        android:summary="%s"
+        android:entries="@array/ninja_names"
+        android:entryValues="@array/ninja_values"
+        app:iconEntries="@array/ninja_icons"
+        android:defaultValue="nin1" />-->
 
 
 
