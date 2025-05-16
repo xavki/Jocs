@@ -1,5 +1,6 @@
 package cat.institutmarianao.jocs
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
@@ -19,30 +20,31 @@ class NombreActivity : AppCompatActivity() {
 
         guardar.setOnClickListener {
             val nombreJugador = name.text.toString().trim()
-
             if (nombreJugador.isNotBlank()) {
-                val sharedPrefs = getSharedPreferences("Puntuacions", MODE_PRIVATE)
-                val puntuacions = sharedPrefs.all.mapValues { it.value.toString().toIntOrNull() ?: 0 }
+                // 1) Guardar nombre
+                val prefsUsuarios = getSharedPreferences("Nombres de usuario", MODE_PRIVATE)
+                prefsUsuarios.edit()
+                    .putString("nombreJugador", nombreJugador)
+                    .apply()
 
-                if (puntuacions.containsKey(nombreJugador)) {
-                    Toast.makeText(this, "Aquest nom ja existeix.", Toast.LENGTH_SHORT).show()
-                } else {
-                    // Guardar nom amb puntuació inicial de 0
-                    val editor = sharedPrefs.edit()
-                    editor.putInt(nombreJugador, 0)
-                    editor.apply()
-
-                    // També guardar per accés ràpid al nom actual
-                    getSharedPreferences("Nombres de usuario", MODE_PRIVATE).edit()
-                        .putString("nombreJugador", nombreJugador)
+                // 2) Crear entrada inicial de puntuación a 0 si no existe
+                val prefsPunts = getSharedPreferences("Puntuacions", MODE_PRIVATE)
+                if (!prefsPunts.contains(nombreJugador)) {
+                    prefsPunts.edit()
+                        .putInt(nombreJugador, 0)
                         .apply()
-
-                    Toast.makeText(this, "Nom guardat: $nombreJugador", Toast.LENGTH_SHORT).show()
-                    finish()
                 }
+
+                // 3) Lanzar la actividad de juego
+                val intent = Intent(this, JocActivity::class.java)
+                intent.putExtra("nombreJugador", nombreJugador)
+                startActivity(intent)
+                // 4) Cerrar NombreActivity
+                finish()
             } else {
                 Toast.makeText(this, "Si us plau, introdueix un nom.", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 }

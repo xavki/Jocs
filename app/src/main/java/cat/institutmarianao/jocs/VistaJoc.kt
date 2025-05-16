@@ -3,6 +3,7 @@ package cat.institutmarianao.jocs
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Canvas
@@ -81,6 +82,8 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
         this.nomJugador = nomJugador
 
+        var nomJugador: String = "Jugador"
+
 
 
         for (i in 0 until numObjectius) {
@@ -158,15 +161,27 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     // Suponiendo que esta función se llama cuando termina el juego:
     fun finalitzarJoc(victoria: Boolean) {
-        val puntuacioFinal: Int = this.puntuacionJugador
-        val intent = Intent(pare, PuntuacionsActivity::class.java)
-        intent.putExtra("puntuacion", puntuacioFinal)
-        intent.putExtra("nombre", this.nomJugador)
-        intent.putExtra("victoria", victoria) // opcional, por si quieres mostrar mensaje
-        pare.startActivity(intent)
-        pare.finish()
-    }
+        val prefs = context.getSharedPreferences("Puntuacions", Context.MODE_PRIVATE)
+        val nombre = nomJugador
+        val puntuacionFinal = puntuacionJugador
+        val anterior = prefs.getInt(nombre, 0)
+        if (puntuacionFinal > anterior) {
+            prefs.edit()
+                .putInt(nombre, puntuacionFinal)
+                .apply()
+        }
+        // 2) Volver al MainActivity
+        val intent = Intent(context, MainActivity::class.java).apply {
+            // Limpia la pila para no acumular actividades
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+        context.startActivity(intent)
+        // 3) Terminar el juego
+        if (context is Activity) {
+            (context as Activity).finish()
+        }
 
+    }
 
 
     inner class ThreadJoc : Thread() {

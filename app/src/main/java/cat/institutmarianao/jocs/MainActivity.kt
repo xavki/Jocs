@@ -60,39 +60,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         jugar.setOnClickListener {
-            // Mostrar un cuadro de texto para que el jugador ingrese su nombre
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Ingrese su nombre")
-            val input = EditText(this)
-            builder.setView(input)
-
-            builder.setPositiveButton("Aceptar") { _, _ ->
-                // Obtener el nombre del jugador ingresado
-                val nombreJugador = input.text.toString().trim()
-
-                if (nombreJugador.isNotEmpty()) {
-                    // Si el jugador ha ingresado un nombre, redirigir al juego
-                    val intent = Intent(this, JocActivity::class.java)
-                    intent.putExtra("nombreJugador", nombreJugador)
-                    intent.putExtra("puntuacion", 0) // Si no tienes una puntuación previa, puedes poner 0
-                    startActivity(intent)
-                } else {
-                    // Si no se ingresa un nombre, mostrar un mensaje y no hacer nada
-                    Toast.makeText(this, "Por favor, ingrese un nombre", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            builder.setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.cancel()
-            }
-
-            val alertDialog = builder.create()
-            alertDialog.show()
+            val intent = Intent(this, NombreActivity::class.java)
+            startActivity(intent)
         }
-
-
-
-
 
 
     }

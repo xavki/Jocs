@@ -14,28 +14,41 @@ class PuntuacionsActivity : AppCompatActivity() {
 
         val listView: ListView = findViewById(R.id.listViewPuntuacions)
 
-        // Obtenir dades del jugador i la puntuació
+        // 1) Puntuación nueva
         val puntuacioNova = intent.getIntExtra("puntuacion", 0)
-        val nomJugador = intent.getStringExtra("nombre") ?: "Jugador Desconegut"
 
-        val sharedPrefs: SharedPreferences = getSharedPreferences("Puntuacions", MODE_PRIVATE)
-        val puntuacionsMap = sharedPrefs.all.mapValues { it.value.toString().toIntOrNull() ?: 0 }.toMutableMap()
+        // 2) Nombre (Intent o SharedPreferences)
+        val nomDeIntent = intent.getStringExtra("nombre")
+        val prefsUsuarios = getSharedPreferences("Nombres de usuario", MODE_PRIVATE)
+        val nomJugador = nomDeIntent ?: prefsUsuarios.getString("nombreJugador", "Jugador")!!
 
-        // Actualitzar la puntuació del jugador si és més alta que l'anterior
+        // 3) Cargamos el map de puntuaciones
+        val sharedPrefs: SharedPreferences =
+            getSharedPreferences("Puntuacions", MODE_PRIVATE)
+        val puntuacionsMap = sharedPrefs
+            .all
+            .mapValues { it.value.toString().toIntOrNull() ?: 0 }
+            .toMutableMap()
+
+        // 4) Actualizamos si ha mejorado
         val puntuacioAnterior = puntuacionsMap[nomJugador] ?: 0
         if (puntuacioNova > puntuacioAnterior) {
             puntuacionsMap[nomJugador] = puntuacioNova
-            sharedPrefs.edit().putInt(nomJugador, puntuacioNova).apply()
+            sharedPrefs.edit()
+                .putInt(nomJugador, puntuacioNova)
+                .apply()
         }
 
-        // Ordenar per puntuació descendent i quedar-se amb les top 5
+        // 5) Ordenamos y mostramos top 5
         val puntuacionsOrdenades = puntuacionsMap.entries
             .sortedByDescending { it.value }
             .take(5)
             .map { "${it.key}: ${it.value}" }
 
-        // Mostrar les puntuacions
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, puntuacionsOrdenades)
-        listView.adapter = adapter
+        listView.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            puntuacionsOrdenades
+        )
     }
 }
