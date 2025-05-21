@@ -23,7 +23,7 @@
         </activity>
 
         <activity android:name=".PuntuacionsActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+            android:theme="@style/Theme.Jocs.ScoreDialog" />
 
         <activity android:name=".NombreActivity"
             android:theme="@style/Theme.AppCompat.Dialog">

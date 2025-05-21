@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Jocs.ScoreDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Quitamos el título y la ActionBar -->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <!-- Si quieres controlar el ancho: -->
+        <item name="android:windowMinWidthMajor">80%</item>
+        <item name="android:windowMinWidthMinor">80%</item>
+        <!-- Ponemos el degradado como fondo de la ventana -->
+        <item name="android:windowBackground">@drawable/degradat</item>
+    </style>
+</resources>
