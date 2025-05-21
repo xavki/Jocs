@@ -108,13 +108,12 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
 
 
-
         // Leemos la preferencia opcion2 ("nin1", "nin2" o "nin3")
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         drawableNinja = when (prefs.getString("opcion2", "nin1")) {
             "nin2" -> ResourcesCompat.getDrawable(resources, R.drawable.ninja02, null)!!
             "nin3" -> ResourcesCompat.getDrawable(resources, R.drawable.ninja03, null)!!
-            else   -> ResourcesCompat.getDrawable(resources, R.drawable.ninja01, null)!!
+            else -> ResourcesCompat.getDrawable(resources, R.drawable.ninja01, null)!!
         }
         //creamos el gráfico del ninja con el drawable adecuado
         ninja = Grafics(this, drawableNinja)
@@ -123,7 +122,6 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
 
         ganivet = Grafics(this, drawableGanivet)
-
 
 
     }
@@ -217,23 +215,25 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         // 0) Actualizar ángulo y velocidad del ninja
         ninja.angle = (ninja.angle + girNinja * retard).toInt()
-        val nIncX = ninja.incX + acceleracioNinja * Math.cos(Math.toRadians(ninja.angle.toDouble())) * retard
-        val nIncY = ninja.incY + acceleracioNinja * Math.sin(Math.toRadians(ninja.angle.toDouble())) * retard
+        val nIncX =
+            ninja.incX + acceleracioNinja * Math.cos(Math.toRadians(ninja.angle.toDouble())) * retard
+        val nIncY =
+            ninja.incY + acceleracioNinja * Math.sin(Math.toRadians(ninja.angle.toDouble())) * retard
         if (Math.hypot(nIncX, nIncY) <= Grafics.MAX_VELOCITAT) {
             ninja.incX = nIncX
             ninja.incY = nIncY
         }
-        // ← Aquí movemos realmente la posición del ninja
+        //Aquí movemos la posición del ninja
         ninja.incrementaPos(retard)
 
-        // 1) Mover todos los objectius (enemigos + fragmentos)
+        // Mover todos los objectius
         objectius.forEach { it.incrementaPos(retard) }
 
-        // 2) Derrota si colisiona con cualquier objectiu
+        //Derrota si colisiona con cualquier objectiu
         objectius.find { ninja.verificaColisio(it) }
             ?.let { finalitzarJoc(false); return }
 
-        // 3) Victoria cuando no queden objectius
+        //Victoria cuando no queden objectius
         if (objectius.isEmpty()) {
             finalitzarJoc(true)
             return
@@ -327,7 +327,6 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     override fun onKeyDown(codiTecla: Int, event: KeyEvent?): Boolean {
         super.onKeyDown(codiTecla, event)
-        // Suposem que processarem la pulsació
         var procesada = true
         when (codiTecla) {
             KeyEvent.KEYCODE_DPAD_UP -> acceleracioNinja = +INC_ACCELERACIO
@@ -335,7 +334,7 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             KeyEvent.KEYCODE_DPAD_LEFT -> girNinja = -INC_GIR
             KeyEvent.KEYCODE_DPAD_RIGHT -> girNinja = +INC_GIR
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {}
-            else ->  // Si estem aquí, no hi ha pulsació que ens interessi
+            else ->  // Si estem aquí, no hi ha pulsació
                 procesada = false
         }
         return procesada
@@ -343,13 +342,13 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     override fun onKeyUp(codigoTecla: Int, evento: KeyEvent?): Boolean {
         super.onKeyUp(codigoTecla, evento)
-        // Suposem que processarem la pulsació
+
         var procesada = true
         when (codigoTecla) {
             KeyEvent.KEYCODE_DPAD_UP -> acceleracioNinja = 0f
             KeyEvent.KEYCODE_DPAD_DOWN -> acceleracioNinja = 0f
             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_RIGHT -> girNinja = 0
-            else ->  // Si estem aquí, no hi ha pulsació que ens interessi
+            else ->
                 procesada = false
         }
         return procesada

@@ -14,15 +14,15 @@ class PuntuacionsActivity : AppCompatActivity() {
 
         val listView: ListView = findViewById(R.id.listViewPuntuacions)
 
-        // 1) Puntuación nueva
+        // Puntuación nueva
         val puntuacioNova = intent.getIntExtra("puntuacion", 0)
 
-        // 2) Nombre (Intent o SharedPreferences)
+        // Nombre
         val nomDeIntent = intent.getStringExtra("nombre")
         val prefsUsuarios = getSharedPreferences("Nombres de usuario", MODE_PRIVATE)
         val nomJugador = nomDeIntent ?: prefsUsuarios.getString("nombreJugador", "Jugador")!!
 
-        // 3) Cargamos el map de puntuaciones
+        // Cargamos el map de puntuaciones
         val sharedPrefs: SharedPreferences =
             getSharedPreferences("Puntuacions", MODE_PRIVATE)
         val puntuacionsMap = sharedPrefs
@@ -30,7 +30,7 @@ class PuntuacionsActivity : AppCompatActivity() {
             .mapValues { it.value.toString().toIntOrNull() ?: 0 }
             .toMutableMap()
 
-        // 4) Actualizamos si ha mejorado
+        // Actualizamos si ha mejorado
         val puntuacioAnterior = puntuacionsMap[nomJugador] ?: 0
         if (puntuacioNova > puntuacioAnterior) {
             puntuacionsMap[nomJugador] = puntuacioNova
@@ -39,7 +39,7 @@ class PuntuacionsActivity : AppCompatActivity() {
                 .apply()
         }
 
-        // 5) Ordenamos y mostramos top 5
+        // Ordenamos y mostramos top 5
         val puntuacionsOrdenades = puntuacionsMap.entries
             .sortedByDescending { it.value }
             .take(5)

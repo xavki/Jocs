@@ -21,13 +21,13 @@ class NombreActivity : AppCompatActivity() {
         guardar.setOnClickListener {
             val nombreJugador = name.text.toString().trim()
             if (nombreJugador.isNotBlank()) {
-                // 1) Guardar nombre
+                // Guardar nombre
                 val prefsUsuarios = getSharedPreferences("Nombres de usuario", MODE_PRIVATE)
                 prefsUsuarios.edit()
                     .putString("nombreJugador", nombreJugador)
                     .apply()
 
-                // 2) Crear entrada inicial de puntuación a 0 si no existe
+                // Crear entrada inicial de puntuación a 0 si no existe
                 val prefsPunts = getSharedPreferences("Puntuacions", MODE_PRIVATE)
                 if (!prefsPunts.contains(nombreJugador)) {
                     prefsPunts.edit()
@@ -35,11 +35,11 @@ class NombreActivity : AppCompatActivity() {
                         .apply()
                 }
 
-                // 3) Lanzar la actividad de juego
+                // Lanzar la actividad de juego
                 val intent = Intent(this, JocActivity::class.java)
                 intent.putExtra("nombreJugador", nombreJugador)
                 startActivity(intent)
-                // 4) Cerrar NombreActivity
+                // Cerrar NombreActivity
                 finish()
             } else {
                 Toast.makeText(this, "Si us plau, introdueix un nom.", Toast.LENGTH_SHORT).show()

@@ -100,31 +100,6 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
-    /*   private fun mostrarDialogNomJugador() {
-           val builder = AlertDialog.Builder(this)
-           builder.setTitle("Nom del jugador")
-           builder.setMessage("Introdueix el teu nom:")
-
-           val input = EditText(this)
-           input.hint = "Escriu aquí el teu nom"
-           builder.setView(input)
-
-           builder.setPositiveButton("OK") { dialog, _ ->
-               val nom = input.text.toString()
-               // Guarda el nom a SharedPreferences
-               val prefs = getSharedPreferences("Noms_de_usuari", MODE_PRIVATE)
-               prefs.edit().putString("nomJugador", nom).apply()
-               Toast.makeText(this, "Nom guardat: $nom", Toast.LENGTH_SHORT).show()
-           }
-
-           builder.setNegativeButton("Cancel·lar") { dialog, _ ->
-               dialog.dismiss()
-           }
-
-           builder.show()
-       }*/
-
-
     override fun onStart() {
         super.onStart()
         // Arrancamos siempre el Musicservice si “Reproducir música” está activo

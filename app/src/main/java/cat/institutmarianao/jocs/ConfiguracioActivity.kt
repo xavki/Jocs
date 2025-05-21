@@ -17,7 +17,7 @@ class ConfiguracioActivity : AppCompatActivity() {
         setContentView(R.layout.activity_configuracio)
 
         if (savedInstanceState == null) {
-            // Cargamos solo el fragmento de configuración
+            // Cargamos el fragmento de configuración
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, ConfiguracioFragment())
                 .commit()

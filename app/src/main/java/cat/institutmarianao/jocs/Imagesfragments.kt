@@ -27,7 +27,8 @@ class Imagesfragments : PreferenceFragmentCompat() {
         }
     }
     private fun showNinjaDialog() {
-        Log.d("Dialog", "showNinjaDialog called")  // Esto nos ayudará a saber si entra al método
+        // Esto ayuda a saber si entra al método
+        Log.d("Dialog", "showNinjaDialog called")
 
         val ninjaNames = arrayOf("Ninja1", "Ninja2", "Ninja3")
         val ninjaValues = arrayOf("1", "2", "3")

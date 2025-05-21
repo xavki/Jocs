@@ -42,7 +42,7 @@ class Grafics(val view: View, val drawable: Drawable) {
         posX += incX * factor
         posY += incY * factor
 
-        // Control de límits horitzontals
+        // Control de limites horitzontals
         if (posX < -amplada / 2) {
             posX = view.width - amplada / 2.0
         }
@@ -50,7 +50,7 @@ class Grafics(val view: View, val drawable: Drawable) {
             posX = -amplada / 2.0
         }
 
-        // Control de límits verticals
+        // Control de limites verticals
         if (posY < -altura / 2) {
             posY = view.height - altura / 2.0
         }
