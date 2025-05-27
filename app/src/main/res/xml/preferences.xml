@@ -11,7 +11,14 @@
         android:title="Reproducir música"
         android:defaultValue="true"/>
 
-        <ListPreference
+    <CheckBoxPreference
+        android:key="opcion_joc"
+        android:title="Música pantalla joc"
+        android:summary="Es reproduiex musica de fons"
+        android:defaultValue="true"/>
+
+
+    <ListPreference
         android:dialogTitle="Escollir ninja"
         android:inputType="number"
         android:key="opcion2"
@@ -20,24 +27,6 @@
         android:entries="@array/ninja_names"
         android:entryValues="@array/ninja_values"
         android:defaultValue="nin2" />
-    <!--<Preference
-        android:dialogTitle="Escollir ninja"
-        android:inputType="number"
-        android:key="opcion2"
-        android:summary="Escollir ninja"
-        android:title="Ninja"
-        android:entries="@array/ninja_names"
-        android:entryValues="@array/ninja_values"
-        android:defaultValue="nin1" />
-    <cat.institutmarianao.jocs.IconListPreference
-        android:key="opcion2"
-        android:title="Ninja"
-        android:dialogTitle="Escollir ninja"
-        android:summary="%s"
-        android:entries="@array/ninja_names"
-        android:entryValues="@array/ninja_values"
-        app:iconEntries="@array/ninja_icons"
-        android:defaultValue="nin1" />-->
 
 
 
@@ -48,5 +37,21 @@
         android:key="opcion3"
         android:summary="Quatitat inicial d'enemics"
         android:title="Nombre de enemics" />
+
+    <EditTextPreference
+        android:key="opcion_num_peque"
+        android:dialogTitle="Nombre de ninjes petits"
+        android:summary="Quants ninjes generem per cada enemic tocat"
+        android:title="Ninjes petits per enemic"
+        android:defaultValue="3"
+        android:inputType="number" />
+
+    <CheckBoxPreference
+        android:key="opcion_inofensius"
+        android:title="Ninjes petits inofensius"
+        android:summary="Si està activat, els ninjes petits no et poden fer mal"
+        android:defaultValue="true"/>
+
+
 
 </PreferenceScreen>

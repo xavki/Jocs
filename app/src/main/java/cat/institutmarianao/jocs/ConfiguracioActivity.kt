@@ -2,6 +2,7 @@ package cat.institutmarianao.jocs
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -15,11 +16,13 @@ import androidx.preference.PreferenceManager
 class ConfiguracioActivity : AppCompatActivity() {
 
     companion object {
-        private const val MAX_OBJETIUS = 200  // el límite que quieras
+        private const val MAX_OBJETIUS = 200  // el límite que quieras de enemigos
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_configuracio)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         if (savedInstanceState == null) {
             // Cargamos el fragmento de configuración
@@ -34,25 +37,24 @@ class ConfiguracioActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
 
-            val musicaPref = findPreference<CheckBoxPreference>("opcion1")
-
-            musicaPref?.setOnPreferenceChangeListener { _, newValue ->
-                val playMusic = newValue as Boolean
-                val context = activity ?: return@setOnPreferenceChangeListener false
-                val intent = Intent(context, Musicservice::class.java)
-
-                if (playMusic) {
-                    intent.action = "START"
-                    context.startService(intent)
-                } else {
-                    intent.action = "STOP"
-                    context.startService(intent)
+            val opc1 = findPreference<CheckBoxPreference>("opcion1")
+            opc1?.setOnPreferenceChangeListener { _, newValue ->
+                val enabled = newValue as Boolean
+                Intent(requireContext(), Musicservice::class.java).also {
+                    it.action = if (enabled) "START_INICIO" else "STOP"
+                    requireContext().startService(it)
                 }
-
                 true
             }
 
-            // Iniciar o detener música al cargar el fragmento según la preferencia actual
+
+
+            val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            Intent(requireContext(), Musicservice::class.java).also {
+                it.action = if (prefs.getBoolean("opcion1", true)) "START_INICIO" else "STOP"
+                requireContext().startService(it)
+            }
+
             val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
             val playMusic = sharedPrefs.getBoolean("opcion1", true)
             val intent = Intent(requireContext(), Musicservice::class.java)
@@ -69,10 +71,8 @@ class ConfiguracioActivity : AppCompatActivity() {
             }
 
             numObjectiusPref?.setOnPreferenceChangeListener { _, newValue ->
-                // 1) Parseamos a Int o null
                 val newNumObjectius = newValue.toString().toIntOrNull()
 
-                // 2) Validamos el rango 1..MAX_OBJETIUS
                 if (newNumObjectius == null || newNumObjectius !in 1..MAX_OBJETIUS) {
                     Toast
                         .makeText(
@@ -84,10 +84,8 @@ class ConfiguracioActivity : AppCompatActivity() {
                     return@setOnPreferenceChangeListener false
                 }
 
-                // 3) (Opcional) actualizar sumario para que se vea el valor
                 numObjectiusPref.summary = newNumObjectius.toString()
 
-                // 4) Guardar en SharedPreferences si necesitas un archivo distinto
                 val sharedPrefs = context
                     ?.getSharedPreferences("Nombres de usuario", Context.MODE_PRIVATE)
                 sharedPrefs
@@ -100,5 +98,7 @@ class ConfiguracioActivity : AppCompatActivity() {
             }
 
         }
+
+
     }
 }

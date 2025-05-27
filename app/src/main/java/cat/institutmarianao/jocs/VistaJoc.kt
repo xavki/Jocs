@@ -69,6 +69,14 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     var nomJugador: String = "Jugador"
 
 
+    // A l’inici de la classe VistaJoc, just després de context:
+    private val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+
+
+    // //// NINJA PETIT //////
+    private var numPeques = prefs.getString("opcion_num_peque", "3")!!.toInt()
+    private var pequesInofensius = prefs.getBoolean("opcion_inofensius", true)
+
     init {
         // Recuperamos el número de enemigos desde las preferencias
         val sharedPrefs: SharedPreferences =
@@ -84,9 +92,9 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         drawableNinja = ResourcesCompat.getDrawable(resources, R.drawable.ninja01, null)!!
 
         drawableObjectiu = arrayOfNulls<Drawable>(3)
-        drawableObjectiu[0] = context.getResources().getDrawable(R.drawable.cap_ninja, null); //cap
-        drawableObjectiu[1] = context.getResources().getDrawable(R.drawable.cos_ninja, null); //cos
-        drawableObjectiu[2] = context.getResources().getDrawable(R.drawable.cua_ninja, null);
+        drawableObjectiu[0] = context.getResources().getDrawable(R.drawable.ninja_petit, null);
+        drawableObjectiu[1] = context.getResources().getDrawable(R.drawable.ninja_petit, null);
+        drawableObjectiu[2] = context.getResources().getDrawable(R.drawable.ninja_petit, null);
 
         if (context is Activity) {
             pare = context
@@ -94,6 +102,7 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         this.nomJugador = nomJugador
 
         var nomJugador: String = "Jugador"
+
 
 
 
@@ -126,20 +135,19 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     }
 
+
     override fun onSizeChanged(ancho: Int, alto: Int, anchoAnt: Int, altoAnt: Int) {
         super.onSizeChanged(ancho, alto, anchoAnt, altoAnt)
 
         // Verificar si ninja está inicializado correctamente
-        // Comprobamos que ninja no es null
         ninja?.let {
-            // Calculamos el centro de la vista
-            val centroX = (ancho - it.amplada) / 2  // Centrado horizontal
-            val centroY = (alto - it.altura) / 2    // Centrado vertical
+            val posicioX = 0
+            val posicioY = alto - it.altura
 
-            // Actualizamos las posiciones de ninja
-            it.posX = centroX.toDouble()
-            it.posY = centroY.toDouble()
+            it.posX = posicioX.toDouble()
+            it.posY = posicioY.toDouble()
         }
+
 
         // Posicionamos los objectius aleatoriamente, asegurándonos de que estén lejos del ninja
         for (objectiu in objectius) {
@@ -178,18 +186,15 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         running = false
         thread?.interrupt()
 
-        // 2) guardamos mejor puntuación
         val prefs = context.getSharedPreferences("Puntuacions", MODE_PRIVATE)
         prefs.edit()
             .putInt(nomJugador, maxOf(prefs.getInt(nomJugador, 0), puntuacionJugador))
             .apply()
 
-        // 3) regresamos al MainActivity
         val intent = Intent(context, MainActivity::class.java)
             .apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP) }
         context.startActivity(intent)
 
-        // 4) cerramos la vista de juego
         if (context is Activity) (context as Activity).finish()
     }
 
@@ -213,7 +218,6 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         val retard = (now - ultimProces) / PERIODE_PROCES.toDouble()
         ultimProces = now
 
-        // 0) Actualizar ángulo y velocidad del ninja
         ninja.angle = (ninja.angle + girNinja * retard).toInt()
         val nIncX =
             ninja.incX + acceleracioNinja * Math.cos(Math.toRadians(ninja.angle.toDouble())) * retard
@@ -223,15 +227,18 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             ninja.incX = nIncX
             ninja.incY = nIncY
         }
-        //Aquí movemos la posición del ninja
         ninja.incrementaPos(retard)
 
-        // Mover todos los objectius
         objectius.forEach { it.incrementaPos(retard) }
 
-        //Derrota si colisiona con cualquier objectiu
-        objectius.find { ninja.verificaColisio(it) }
-            ?.let { finalitzarJoc(false); return }
+        objectius.find {
+            ninja.verificaColisio(it)
+                    && (it.drawable === drawableEnemic || !pequesInofensius)
+        }?.let {
+            finalitzarJoc(false)
+            return
+        }
+
 
         //Victoria cuando no queden objectius
         if (objectius.isEmpty()) {
@@ -258,25 +265,34 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun destrueixObjectiu(i: Int) {
-        val numParts = 3
         puntuacionJugador += 10
+
         if (objectius[i].drawable === drawableEnemic) {
-            for (n in 0 until numParts) {
-                val objectiu = Grafics(this, drawableObjectiu[n]!!)
-                objectiu.posX = objectius[i].posX
-                objectiu.posY = objectius[i].posY
-                objectiu.incX = Math.random() * 7 - 3
-                objectiu.incY = Math.random() * 7 - 3
-                objectiu.angle = (Math.random() * 360).toInt()
-                objectiu.rotacio = (Math.random() * 8 - 4).toInt()
-                objectius.add(objectiu)
+            val actualesPeques = objectius.count {
+                drawableObjectiu.contains(it.drawable)
+            }
+
+            val maxPeques = 100
+            val canCrear = (numPeques).coerceAtMost(maxPeques - actualesPeques)
+
+            for (n in 0 until canCrear) {
+                val d = drawableObjectiu[n % drawableObjectiu.size]!!
+                val ninjePetit = Grafics(this, d)
+                ninjePetit.posX = objectius[i].posX
+                ninjePetit.posY = objectius[i].posY
+                ninjePetit.incX = Math.random() * 7 - 3
+                ninjePetit.incY = Math.random() * 7 - 3
+                ninjePetit.angle = (Math.random() * 360).toInt()
+                ninjePetit.rotacio = (Math.random() * 8 - 4).toInt()
+                objectius.add(ninjePetit)
             }
         }
 
         objectius.removeAt(i)
         ganivetActiu = false
-        mpExplosio?.start();
+        mpExplosio?.start()
     }
+
 
     private fun DisparaGanivet() {
         ganivet.posX = ninja.posX + ninja.amplada / 2 - ganivet.amplada / 2
@@ -353,5 +369,6 @@ class VistaJoc(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
         return procesada
     }
+
 
 }

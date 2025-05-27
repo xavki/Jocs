@@ -6,69 +6,65 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="Ninja Warrior"
+        app:titleTextColor="@android:color/white" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/my_toolbar"
-            android:layout_width="0dp"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:title="Ninja Warrior"
-            app:titleTextColor="@android:color/white" />
 
-    <TextView
+    <ImageView
         android:id="@+id/appTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="160dp"
-        android:text="Ninja warrior"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        android:src="@drawable/ninja01"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
+
 
     <Button
         android:id="@+id/btnJugar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="211dp"
+        android:layout_height="58dp"
         android:layout_below="@id/appTitle"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="152dp"
         android:text="Començar a jugar"
-        app:layout_constraintEnd_toEndOf="@+id/appTitle"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/appTitle"
-        app:layout_constraintTop_toBottomOf="@+id/appTitle" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
 
     <Button
-            android:id="@+id/btnPuntuacions"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/btnJugar"
-            android:layout_alignEnd="@+id/btnJugar"
-            android:layout_marginTop="50dp"
-            android:text="Veure puntuacions"
-            app:layout_constraintEnd_toEndOf="@+id/btnJugar"
-            app:layout_constraintStart_toStartOf="@+id/btnJugar"
-            app:layout_constraintTop_toBottomOf="@+id/btnJugar" />
+        android:id="@+id/btnSortir"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnPuntuacions"
+        android:layout_marginTop="44dp"
+        android:text="Sortir"
+        app:layout_constraintEnd_toEndOf="@+id/btnPuntuacions"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/btnPuntuacions"
+        app:layout_constraintTop_toBottomOf="@+id/btnPuntuacions" />
 
-        <Button
-            android:id="@+id/btnSortir"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/btnPuntuacions"
-            android:layout_marginTop="50dp"
-            android:text="Sortir"
-            app:layout_constraintEnd_toEndOf="@+id/btnPuntuacions"
-            app:layout_constraintStart_toStartOf="@+id/btnPuntuacions"
-            app:layout_constraintTop_toBottomOf="@+id/btnPuntuacions" />
+    <Button
+        android:id="@+id/btnPuntuacions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btnJugar"
+        android:layout_alignEnd="@+id/btnJugar"
+        android:layout_marginTop="48dp"
+        android:text="Veure puntuacions"
+        app:layout_constraintEnd_toEndOf="@+id/btnJugar"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/btnJugar"
+        app:layout_constraintTop_toBottomOf="@+id/btnJugar" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

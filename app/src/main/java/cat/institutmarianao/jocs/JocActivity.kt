@@ -1,6 +1,7 @@
 package cat.institutmarianao.jocs
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
@@ -11,6 +12,8 @@ class JocActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         Intent(this, Musicservice::class.java).also {
             it.action = "STOP"
             startService(it)
@@ -28,28 +31,33 @@ class JocActivity : AppCompatActivity() {
         vista.nomJugador = nombreExtra ?: nombrePrefs
 
 
-        //Leer la preferencia si está activa volver a arrancar la música
-        val playMusic = PreferenceManager
-            .getDefaultSharedPreferences(this)
-            .getBoolean("opcion1", true)
+        val playJoc = PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean("opcion_joc", true)
 
-        if (playMusic) {
-            Intent(this, Musicservice::class.java).also {
-                it.action = "START"
-                startService(it)
-            }
+        Intent(this, Musicservice::class.java).also {
+            it.action = if (playJoc)
+                "START_JOC"
+            else
+                "STOP"
+            startService(it)
         }
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        Intent(this, Musicservice::class.java).also {
+            it.action = if (prefs.getBoolean("opcion_joc", true)) "START_JOC" else "STOP"
+            startService(it)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        //Si la preferencia sigue ON volvemos a arrancar el servicio al cerrar el juego
-        val prefs = PreferenceManager
-            .getDefaultSharedPreferences(this)
-        if (prefs.getBoolean("opcion1", true)) {
+        if (isFinishing) {
             Intent(this, Musicservice::class.java).also {
-                it.action = "START"
+                it.action = "STOP"
                 startService(it)
             }
         }

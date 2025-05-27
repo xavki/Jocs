@@ -4,45 +4,38 @@ import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.IBinder
+import androidx.annotation.RawRes
 
 class Musicservice : Service() {
     private var mediaPlayer: MediaPlayer? = null
-    private var isPrepared = false
-
-    override fun onCreate() {
-        super.onCreate()
-        mediaPlayer = MediaPlayer.create(this, R.raw.pokemontcg)
-        mediaPlayer?.isLooping = true
-        isPrepared = true
-    }
+    private var currentType: String? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            "START" -> {
-                if (mediaPlayer == null) {
-                    mediaPlayer = MediaPlayer.create(this, R.raw.pokemontcg)
-                    mediaPlayer?.isLooping = true
-                    isPrepared = true
-                }
-                if (isPrepared && mediaPlayer?.isPlaying == false) {
-                    mediaPlayer?.start()
-                }
-            }
-            "STOP" -> {
-                if (mediaPlayer?.isPlaying == true) {
-                    mediaPlayer?.pause()
-                }
-            }
+            "START_INICIO" -> playMusic(R.raw.pokemontcg, "INICIO")
+            "START_JOC"    -> playMusic(R.raw.magodeoz, "JOC")
+            "STOP"         -> mediaPlayer?.pause()
         }
         return START_STICKY
     }
 
+    private fun playMusic(@RawRes resId: Int, type: String) {
+        if (currentType != type) {
+            mediaPlayer?.release()
+            mediaPlayer = MediaPlayer.create(this, resId).apply {
+                isLooping = true
+                start()
+            }
+            currentType = type
+        } else if (mediaPlayer?.isPlaying == false) {
+            mediaPlayer?.start()
+        }
+    }
+
     override fun onDestroy() {
         mediaPlayer?.release()
-        mediaPlayer = null
-        isPrepared = false
         super.onDestroy()
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    override fun onBind(intent: Intent?) = null
 }

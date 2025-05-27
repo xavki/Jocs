@@ -1,6 +1,7 @@
 package cat.institutmarianao.jocs
 
 import android.content.SharedPreferences
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -11,6 +12,7 @@ class PuntuacionsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_puntuacions)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         val listView: ListView = findViewById(R.id.listViewPuntuacions)
 
