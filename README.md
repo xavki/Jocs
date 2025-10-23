@@ -1,9 +1,4 @@
-# 🎮 Jocs · Aplicación Android en Kotlin
-
-Aplicación Android desarrollada en **Kotlin** que reúne varios mini juegos y funcionalidades multimedia.  
-Forma parte de un proyecto educativo del Institut Marianao para practicar programación en Android con servicios, fragmentos, vistas personalizadas y gestión de sonidos.
-
----
+# 🎮 Juegos · Aplicación Android en Kotlin
 
 ## 🧩 Descripción general
 
